@@ -1,9 +1,22 @@
 parameters:
-    level: 5
+    # Максимальный уровень проверки
+    level: max
+
+    # Пути к исходникам и тестам
     paths:
         - src
-    parallel:
-        processTimeout: 300.0
-    inferPrivatePropertyTypeFromConstructor: true
-    treatPhpDocTypesAsCertain: false
-    ignoreErrors:
+        - tests
+
+    # Автозагрузка
+    bootstrapFiles:
+        - vendor/autoload.php
+
+    # Показывать все ошибки игнорирования
+    reportUnmatchedIgnoredErrors: true
+
+includes:
+    # Строгие правила (variables, types, etc.)
+    - vendor/phpstan/phpstan-strict-rules/rules.neon
+
+    # Проверка использования deprecated методов и классов
+    - vendor/phpstan/phpstan-deprecation-rules/rules.neon

@@ -1,10 +1,12 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Yurinskiy\Context\Tests;
 
+use PHPUnit\Framework\TestCase;
 use Yurinskiy\Context\ContextBucket;
 use Yurinskiy\Context\ContextInterface;
-use PHPUnit\Framework\TestCase;
 
 class ContextBucketTest extends TestCase
 {
@@ -13,8 +15,8 @@ class ContextBucketTest extends TestCase
         $context = new MockContext('test');
         $bucket = ContextBucket::instance($context);
 
-        $this->assertInstanceOf(ContextBucket::class, $bucket);
-        $this->assertSame($context, $bucket->last(MockContext::class));
+        self::assertInstanceOf(ContextBucket::class, $bucket);
+        self::assertSame($context, $bucket->last(MockContext::class));
     }
 
     public function testConstructorAddsContexts(): void
@@ -24,7 +26,7 @@ class ContextBucketTest extends TestCase
 
         $bucket = new ContextBucket($context1, $context2);
 
-        $this->assertSame($context2, $bucket->last(MockContext::class)); // last should be second
+        self::assertSame($context2, $bucket->last(MockContext::class)); // last should be second
     }
 
     public function testAddMethod(): void
@@ -35,11 +37,11 @@ class ContextBucketTest extends TestCase
         $bucket = new ContextBucket();
         $bucket->add($context1);
 
-        $this->assertSame($context1, $bucket->last(MockContext::class));
+        self::assertSame($context1, $bucket->last(MockContext::class));
 
         $bucket->add($context2);
 
-        $this->assertSame($context2, $bucket->last(MockContext::class));
+        self::assertSame($context2, $bucket->last(MockContext::class));
     }
 
     public function testAddReturnsSelf(): void
@@ -47,14 +49,14 @@ class ContextBucketTest extends TestCase
         $bucket = new ContextBucket();
         $result = $bucket->add(new MockContext('test'));
 
-        $this->assertSame($bucket, $result);
+        self::assertSame($bucket, $result);
     }
 
     public function testLastReturnsNullWhenNoContext(): void
     {
         $bucket = new ContextBucket();
 
-        $this->assertNull($bucket->last(MockContext::class));
+        self::assertNull($bucket->last(MockContext::class));
     }
 
     public function testLastReturnsLastAddedContext(): void
@@ -64,7 +66,7 @@ class ContextBucketTest extends TestCase
 
         $bucket = new ContextBucket($context1, $context2);
 
-        $this->assertSame($context2, $bucket->last(MockContext::class));
+        self::assertSame($context2, $bucket->last(MockContext::class));
     }
 
     public function testAllReturnsAllContexts(): void
@@ -77,10 +79,10 @@ class ContextBucketTest extends TestCase
 
         $all = $bucket->all();
 
-        $this->assertCount(2, $all); // 2 different classes
-        $this->assertContains($context1, $all[MockContext::class]);
-        $this->assertContains($context2, $all[MockContext::class]);
-        $this->assertContains($context3, $all[AnotherMockContext::class]);
+        self::assertCount(2, $all); // 2 different classes
+        self::assertContains($context1, $all[MockContext::class]);
+        self::assertContains($context2, $all[MockContext::class]);
+        self::assertContains($context3, $all[AnotherMockContext::class]);
     }
 
     public function testGroupReturnsAllOfSpecificType(): void
@@ -94,11 +96,11 @@ class ContextBucketTest extends TestCase
         $mockContexts = $bucket->group(MockContext::class);
         $anotherContexts = $bucket->group(AnotherMockContext::class);
 
-        $this->assertCount(2, $mockContexts);
-        $this->assertCount(1, $anotherContexts);
-        $this->assertContains($context1, $mockContexts);
-        $this->assertContains($context2, $mockContexts);
-        $this->assertContains($context3, $anotherContexts);
+        self::assertCount(2, $mockContexts);
+        self::assertCount(1, $anotherContexts);
+        self::assertContains($context1, $mockContexts);
+        self::assertContains($context2, $mockContexts);
+        self::assertContains($context3, $anotherContexts);
     }
 
     public function testGroupReturnsEmptyArrayForNonExistentType(): void
@@ -107,19 +109,7 @@ class ContextBucketTest extends TestCase
 
         $result = $bucket->group(MockContext::class);
 
-        $this->assertIsArray($result);
-        $this->assertEmpty($result);
-    }
-
-    public function testGroupReturnsEmptyArrayWhenNullGiven(): void
-    {
-        $context = new MockContext('test');
-        $bucket = new ContextBucket($context);
-
-        $result = $bucket->group(null);
-
-        $this->assertIsArray($result);
-        $this->assertEmpty($result);
+        self::assertEmpty($result);
     }
 
     public function testHasReturnsTrueWhenContextExists(): void
@@ -127,14 +117,14 @@ class ContextBucketTest extends TestCase
         $context = new MockContext('test');
         $bucket = new ContextBucket($context);
 
-        $this->assertTrue($bucket->has(MockContext::class));
+        self::assertTrue($bucket->has(MockContext::class));
     }
 
     public function testHasReturnsFalseWhenContextDoesNotExist(): void
     {
         $bucket = new ContextBucket();
 
-        $this->assertFalse($bucket->has(MockContext::class));
+        self::assertFalse($bucket->has(MockContext::class));
     }
 
     public function testHasReturnsFalseWhenContextIsNull(): void
@@ -144,7 +134,7 @@ class ContextBucketTest extends TestCase
         $bucket = new ContextBucket();
         // The current implementation of has() relies on last() returning null
         // and casting that to bool (null -> false)
-        $this->assertFalse($bucket->has(MockContext::class));
+        self::assertFalse($bucket->has(MockContext::class));
     }
 
     public function testWithoutContextsReturnsNewBucketWithoutSpecifiedType(): void
@@ -155,15 +145,15 @@ class ContextBucketTest extends TestCase
 
         $originalBucket = new ContextBucket($context1, $context2, $context3);
 
-        $newBucket = $originalBucket->withoutContexts(MockContext::class);
+        $newBucket = $originalBucket->withoutAll(MockContext::class);
 
         // Original should still have MockContext
-        $this->assertTrue($originalBucket->has(MockContext::class));
-        $this->assertTrue($originalBucket->has(AnotherMockContext::class));
+        self::assertTrue($originalBucket->has(MockContext::class));
+        self::assertTrue($originalBucket->has(AnotherMockContext::class));
 
         // New bucket should not have MockContext but should have AnotherMockContext
-        $this->assertFalse($newBucket->has(MockContext::class));
-        $this->assertTrue($newBucket->has(AnotherMockContext::class));
+        self::assertFalse($newBucket->has(MockContext::class));
+        self::assertTrue($newBucket->has(AnotherMockContext::class));
     }
 
     public function testToFlatArrayReturnsAllContextsInOneArray(): void
@@ -176,10 +166,10 @@ class ContextBucketTest extends TestCase
 
         $flatArray = $bucket->toFlatArray();
 
-        $this->assertCount(3, $flatArray);
-        $this->assertContains($context1, $flatArray);
-        $this->assertContains($context2, $flatArray);
-        $this->assertContains($context3, $flatArray);
+        self::assertCount(3, $flatArray);
+        self::assertContains($context1, $flatArray);
+        self::assertContains($context2, $flatArray);
+        self::assertContains($context3, $flatArray);
     }
 
     public function testFilterReturnsNewBucketWithFilteredContexts(): void
@@ -197,11 +187,11 @@ class ContextBucketTest extends TestCase
 
         $flatFiltered = $filteredBucket->toFlatArray();
 
-        $this->assertCount(2, $flatFiltered);
+        self::assertCount(2, $flatFiltered);
         foreach ($flatFiltered as $ctx) {
-            $this->assertInstanceOf(MockContext::class, $ctx);
+            self::assertInstanceOf(MockContext::class, $ctx);
         }
-        $this->assertFalse($filteredBucket->has(AnotherMockContext::class));
+        self::assertFalse($filteredBucket->has(AnotherMockContext::class));
     }
 
     public function testFilterWithEmptyResult(): void
@@ -216,8 +206,8 @@ class ContextBucketTest extends TestCase
             return false;
         });
 
-        $this->assertEmpty($filteredBucket->toFlatArray());
-        $this->assertNull($filteredBucket->last(MockContext::class));
+        self::assertEmpty($filteredBucket->toFlatArray());
+        self::assertNull($filteredBucket->last(MockContext::class));
     }
 
     public function testAddingMultipleContextsOfSameType(): void
@@ -230,8 +220,8 @@ class ContextBucketTest extends TestCase
         $bucket->add($context1, $context2, $context3);
 
         $allMockContexts = $bucket->group(MockContext::class);
-        $this->assertCount(3, $allMockContexts);
-        $this->assertSame($context3, $bucket->last(MockContext::class));
+        self::assertCount(3, $allMockContexts);
+        self::assertSame($context3, $bucket->last(MockContext::class));
     }
 
     public function testMultipleContextTypes(): void
@@ -241,10 +231,10 @@ class ContextBucketTest extends TestCase
 
         $bucket = new ContextBucket($mockCtx, $anotherCtx);
 
-        $this->assertTrue($bucket->has(MockContext::class));
-        $this->assertTrue($bucket->has(AnotherMockContext::class));
-        $this->assertSame($mockCtx, $bucket->last(MockContext::class));
-        $this->assertSame($anotherCtx, $bucket->last(AnotherMockContext::class));
+        self::assertTrue($bucket->has(MockContext::class));
+        self::assertTrue($bucket->has(AnotherMockContext::class));
+        self::assertSame($mockCtx, $bucket->last(MockContext::class));
+        self::assertSame($anotherCtx, $bucket->last(AnotherMockContext::class));
     }
 }
 

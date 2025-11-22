@@ -1,8 +1,7 @@
 <?php
 
 $finder = PhpCsFixer\Finder::create()
-    ->in('src')
-;
+    ->in(['src', 'tests']);
 
 $config = new PhpCsFixer\Config();
 return $config
@@ -11,7 +10,7 @@ return $config
         'declare_strict_types' => true,
         'strict_param' => true,
         'array_syntax' => ['syntax' => 'short'],
+
     ])
     ->setRiskyAllowed(true)
-    ->setFinder($finder)
-    ;
+    ->setFinder($finder);

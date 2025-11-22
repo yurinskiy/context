@@ -10,12 +10,12 @@ use Yurinskiy\Context\ContextInterface;
 class MarkedContextBucket extends ContextBucket
 {
     /**
-     * @param class-string<ContextInterface>[] $marks
+     * @var list<class-string<ContextInterface>>
      */
     private array $marks;
 
     /**
-     * @param class-string<ContextInterface>[] $marks
+     * @param list<class-string<ContextInterface>> $marks
      */
     public function __construct(array $marks, ContextInterface ...$contexts)
     {

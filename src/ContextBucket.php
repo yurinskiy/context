@@ -31,15 +31,23 @@ class ContextBucket
     }
 
     /**
-     * @template T of ContextInterface
+     * @template TContext of ContextInterface
      *
-     * @param class-string<T> $contextFqcn
+     * @param class-string<TContext> $contextFqcn
      *
-     * @return T|null
+     * @return TContext|null
      */
     public function last(string $contextFqcn): ?ContextInterface
     {
-        return isset($this->contexts[$contextFqcn]) ? end($this->contexts[$contextFqcn]) : null;
+        if (!isset($this->contexts[$contextFqcn])) {
+            return null;
+        }
+
+        /** @var list<TContext> $list */
+        $list = &$this->contexts[$contextFqcn];
+        $lastKey = array_key_last($list);
+
+        return null !== $lastKey ? $list[$lastKey] : null;
     }
 
     /**
@@ -51,19 +59,22 @@ class ContextBucket
     }
 
     /**
-     * @template T of ContextInterface
+     * @template TContext of ContextInterface
      *
-     * @param class-string<T>|null $contextFqcn
+     * @param class-string<TContext> $contextFqcn
      *
-     * @return T[] Возвращает все контексты группированные по типам
+     * @return list<TContext>
      */
-    public function group(?string $contextFqcn = null): array
+    public function group(string $contextFqcn): array
     {
-        if (null !== $contextFqcn) {
-            return $this->contexts[$contextFqcn] ?? [];
+        if (!isset($this->contexts[$contextFqcn])) {
+            return [];
         }
 
-        return [];
+        /** @var list<TContext> $list */
+        $list = &$this->contexts[$contextFqcn];
+
+        return $list;
     }
 
     /**
@@ -79,7 +90,7 @@ class ContextBucket
      *
      * @param class-string<ContextInterface> $contextFqcn
      */
-    public function withoutContexts(string $contextFqcn): ContextBucket
+    public function withoutAll(string $contextFqcn): ContextBucket
     {
         $cloned = clone $this;
 
