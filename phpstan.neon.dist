@@ -1,0 +1,9 @@
+parameters:
+    level: 5
+    paths:
+        - src
+    parallel:
+        processTimeout: 300.0
+    inferPrivatePropertyTypeFromConstructor: true
+    treatPhpDocTypesAsCertain: false
+    ignoreErrors:

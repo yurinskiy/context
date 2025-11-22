@@ -1,0 +1,45 @@
+{
+  "name": "yurinskiy/context",
+  "description": "The context storage helper with type-safe lookups.",
+  "type": "library",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Yuriy Yurisnkiy",
+      "email": "yuriyyurinskiy@yandex.ru",
+      "role": "Developer"
+    },
+    {
+      "name": "Michael Korenev",
+      "role": "Developer"
+    }
+  ],
+  "support": {
+    "issues": "https://github.com/yurinskiy/context/issues"
+  },
+  "require": {
+    "php": ">=7.4"
+  },
+  "require-dev": {
+    "friendsofphp/php-cs-fixer": "^3.10",
+    "phpstan/phpstan": "^1.10",
+    "phpunit/phpunit": "^9.6"
+  },
+  "autoload": {
+    "psr-4": {
+      "Yurinskiy\\Context\\": "src/"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "Yurinskiy\\Context\\Tests\\": "tests/"
+    }
+  },
+  "scripts": {
+    "code-style": [
+      "./vendor/bin/php-cs-fixer fix -v",
+      "./vendor/bin/phpstan analyse --memory-limit=512M"
+    ],
+    "test": "./vendor/bin/phpunit"
+  }
+}
